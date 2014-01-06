@@ -109,7 +109,7 @@ cl_program programFromSource(const std::string &fileName, const cl_context conte
 // required by this program.
 void initOpenCL() {
     int errcode = 0;
-    unsigned int partitionSize, i, j;
+    unsigned int i, j;
     cl_platform_id platformId;
     numDevices = 0;
     cl_device_id deviceIds[8];
@@ -122,7 +122,8 @@ void initOpenCL() {
     commandQueues = (cl_command_queue **) calloc(sizeof(cl_command_queue*), numDevices);
     saxpyProgram = (cl_program **) calloc(sizeof(cl_program *), numDevices);
 
-    partitionSize = numberElems / (numDevices * numOverlap);
+    globalWorkSize[0] = numberElems / (numDevices * numOverlap);
+
 
     input1 = (cl_mem **) calloc(sizeof(cl_mem *), numDevices);
     input2 = (cl_mem **) calloc(sizeof(cl_mem *), numDevices);
@@ -150,17 +151,17 @@ void initOpenCL() {
             // Create a command queue so that the host can issue orders to the device
             commandQueues[i][j] = clCreateCommandQueue(contexts[i][j], deviceIds[i], 0, &errcode);
             // Create buffer objects for X matrix
-            input1[i][j] = clCreateBuffer(contexts[i][j], CL_MEM_READ_WRITE, sizeof(cl_float) * partitionSize, NULL, &errcode);
+            input1[i][j] = clCreateBuffer(contexts[i][j], CL_MEM_READ_WRITE, sizeof(cl_float) * globalWorkSize[0], NULL, &errcode);
             if(errcode != 0) {
                 std::cerr << "CreateBuffer (X): " << errorString(errcode) << std::endl;
             }
             // Create buffer objects for Y Matrix
-            input2[i][j] = clCreateBuffer(contexts[i][j], CL_MEM_READ_WRITE, sizeof(cl_float) * partitionSize, NULL, &errcode);
+            input2[i][j] = clCreateBuffer(contexts[i][j], CL_MEM_READ_WRITE, sizeof(cl_float) * globalWorkSize[0], NULL, &errcode);
             if(errcode != 0) {
                 std::cerr << "CreateBuffer (Y): " << errorString(errcode) << std::endl;
             }
             // Create buffer objects for the output
-            output[i][j] = clCreateBuffer(contexts[i][j], CL_MEM_READ_WRITE, sizeof(cl_float) * partitionSize, NULL, &errcode);
+            output[i][j] = clCreateBuffer(contexts[i][j], CL_MEM_READ_WRITE, sizeof(cl_float) * globalWorkSize[0], NULL, &errcode);
             if(errcode != 0) {
                 std::cerr << "CreateBuffer (output): " << errorString(errcode) << std::endl;
             }
@@ -202,8 +203,6 @@ void finishOpenCL() {
 void run(unsigned int device, unsigned int overlap, unsigned int numPartition) {
     int errcode = 0;
     float alpha = ALPHA_SCALAR;
-
-    globalWorkSize[0] = numberElems / (numDevices * numOverlap);
 
     unsigned int start = numPartition * (sizeof(cl_float) * globalWorkSize[0]);
 
