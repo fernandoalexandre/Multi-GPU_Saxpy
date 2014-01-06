@@ -3,9 +3,11 @@ h1. Multi-GPU Saxpy Example
 This program is an example of a multi-GPU computation (within a single system),
 that applies a Saxpy matrix operation decomposed evenly among the GPUs.
 
-SAXPY is a matrix operation which is part of the "Basic Linear Algebra Subprograms":http://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms (BLAS), which applies the following formula:
+SAXPY is a matrix operation which is part of the "Basic Linear Algebra Subprograms":http://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms 
+(BLAS), which applies the following formula:
 
-<dfn>Z[i] = &alpha;*X[i] + Y[i]; _&alpha;_ is a scalar and X/Y same-sized Matrices</dfn>
+<dfn>Z[i] = &alpha;*X[i] + Y[i]; _&alpha;_ is a scalar and X/Y same-sized 
+Matrices</dfn>
 
 Warning: Keep in mind this is an educational example, and as such it does not 
 handle all extreme cases to try and maintain the code itself readable.
@@ -19,7 +21,8 @@ OpenCL compilation flags.
 
 h3. Linux
 
-To compile this example in Linux depends greatly on the configuration. The following command is used for default paths on the AMD SDK:
+To compile this example in Linux depends greatly on the configuration.
+The following command is used for default paths on the AMD SDK:
 
 @g++ -L/opt/AMDAPP/lib/x86_64/ -I/opt/AMDAPP/include main.cpp -lOpenCL -o main@
 
